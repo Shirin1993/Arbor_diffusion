@@ -1,0 +1,7 @@
+
+cd inj
+arbor-build-catalogue custom_inj .
+cd ../dec
+arbor-build-catalogue custom_dec .
+cd ..
+python3.12 Arbor_diff.py 
