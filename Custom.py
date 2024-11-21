@@ -18,7 +18,7 @@ gammaD = 0.01 *1000
 thP = .00011*1e6
 thD = .00005*1e6
 
-I0 = 6.0*1e-12  # synaptic input current in [A]  
+I0 = 5.5*1e-12  # synaptic input current in [A]  
 taudec =  1*1e-3  # synaptic input current decay time in [s]
 
 
