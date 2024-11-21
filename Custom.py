@@ -60,8 +60,7 @@ dx = L / (N_dend)  # Length of each dendritic segments in [m]
 steps=time
 xtime=np.linspace(0,(steps*dt*1e3),steps)
 
-
-spine_list = [160-4, 160, 160+4, 160+4+4]
+spine_list = [160-2, 160, 160+2, 160+2+2+2]
 
 # Ca Parameters
 Z = 2  # Calcium valance
@@ -196,16 +195,21 @@ for i in range(4):
     print(f"Data saved to {filenamew} using pickle.")
 
 
+for i in [159+N_spine,161+N_spine,164+N_spine]:
+    data_to_save = np.copy( 1e-3*1e6*U[i, :]) # in uM # the U is in the unit of mol/m^3 . which is equal to 0.001 M . or 1 mM
+    filename = f'PCaD{i}_{delta_t}.pkl'
+    with open(filename, 'wb') as file:
+        pickle.dump(data_to_save, file)
 
+
+
+#______________________________________________
 # Plots :
+
 
 delta_t = 0.01
 markersizes = 3
-# ca values from Arbor 
-S0 = np.loadtxt(f'ACaS0_{delta_t}.txt')
-S1 = np.loadtxt(f'ACaS1_{delta_t}.txt')
-S2 = np.loadtxt(f'ACaS2_{delta_t}.txt')
-S3 = np.loadtxt(f'ACaS3_{delta_t}.txt')
+
 
 
 coefunit = 1e3
@@ -214,7 +218,6 @@ fig, axes = plt.subplots(NumSpines, sharex=True,figsize=(10, 8), dpi=180)
 #Arbor
 yk = []
 ykl = []
-# xk = []
 xk = np.arange(0,8000,1000)
 for i in range(8):
     yk.append((np.round( i*1e-3*thD,2)))  
@@ -226,13 +229,6 @@ for i in range(4):
     axes[i].plot([1e-3*thP]*len(S0))
     axes[i].set_yticks(yk,ykl)
     axes[i].set_xticks(xk,xk/100)
-    
-line_color = '#000080'
-axes[0].plot(coefunit *S0[::],'.',markersize = markersizes, color=line_color,alpha = 0.5, label=f'Arbor {np.round(coefunit*S0[::].max(),5)}  \n final  {np.round(coefunit*S0[-1].max(),3)}' )#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-
-axes[1].plot(coefunit *S1[::], '.',markersize = markersizes,color=line_color,alpha = 0.5, label=f'Arbor {np.round(coefunit*S1[::].max(),5)}  \n final  {np.round(coefunit*S1[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-axes[2].plot(coefunit *S2[::], '.',markersize = markersizes,color=line_color,alpha = 0.5, label=f'Arbor {np.round(coefunit*S2[::].max(),5)}  \n final  {np.round(coefunit*S2[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-axes[3].plot(coefunit *S3[::], '.',markersize = markersizes,color=line_color,alpha = 0.5, label=f'Arbor {np.round(coefunit*S3[::].max(),5)}  \n final  {np.round(coefunit*S3[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
 
 #Python 
 
@@ -286,21 +282,10 @@ axes[3].set_ylim(ylilmmin,ylilmmax)
 #Weights
 
 delta_t = 0.01
-# ca values from Arbor 
-WS0 = np.loadtxt(f'AWS0_{delta_t}.txt')
-WS1 = np.loadtxt(f'AWS1_{delta_t}.txt')
-WS2 = np.loadtxt(f'AWS2_{delta_t}.txt')
-WS3 = np.loadtxt(f'AWS3_{delta_t}.txt')
 
 coefunit = 1
 NumSpines = 4
 fig, axes = plt.subplots(NumSpines, sharex=True,figsize=(10, 8), dpi=180)
-#Arbor 
-line_color = '#000080'
-axes[0].plot(WS0[::],'-',markersize = 1, color=line_color,alpha = 0.5, label=f'Arbor {np.round(WS0[::].max(),5)}  \n final  {np.round(WS0[-1].max(),3)}' )#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-axes[1].plot(WS1[::], '-',markersize = 1,color=line_color,alpha = 0.5, label=f'Arbor {np.round(WS1[::].max(),5)}  \n final  {np.round(WS1[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-axes[2].plot(WS2[::], '-',markersize = 1,color=line_color,alpha = 0.5, label=f'Arbor {np.round(WS2[::].max(),5)}  \n final  {np.round(WS2[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
-axes[3].plot(WS3[::], '-',markersize = 1,color=line_color,alpha = 0.5, label=f'Arbor {np.round(WS3[::].max(),5)}  \n final  {np.round(WS3[-1].max(),3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
 
 #Python 
 
@@ -356,4 +341,79 @@ for i in range(4):
     axes[i].plot([0.5]*len(WPS0), '--',c='gray')
 
 
+# Dendrite:
+#Dendrite
+
+
+delta_t = 0.01
+markersizes = 3
+
+
+
+coefunit = 1e3
+NumDend = 3
+fig, axes = plt.subplots(3, sharex=True,figsize=(10, 6), dpi=180)
+
+yk = []
+ykl = []
+
+xk = np.arange(0,8000,1000)
+for i in range(8):
+    yk.append((np.round( i*1e-3*thD,2)))  
+    ykl.append(("%.2f" % round(i*1e-3*thD, 2)))  
+    
+    
+for i in range(NumDend):
+
+    axes[i].set_yticks(yk,ykl)
+    axes[i].set_xticks(xk,xk/100)
+    
+    
+
+#Python 
+
+dendID =   [159+N_spine,161+N_spine,164+N_spine]
+delta_tp = str(dt*1000)
+
+# Load all data from the single pickle file
+filename = f'PCaD{dendID[0]}_{delta_tp}.pkl'
+with open(filename, 'rb') as file:
+    loaded_all_data = pickle.load(file)
+
+# Assign each piece of data to a variable
+UD0 = loaded_all_data
+filename = f'PCaD{dendID[1]}_{delta_tp}.pkl'
+with open(filename, 'rb') as file:
+    loaded_all_data = pickle.load(file)
+    
+UD1 = loaded_all_data
+filename = f'PCaD{dendID[2]}_{delta_tp}.pkl'
+with open(filename, 'rb') as file:
+    loaded_all_data = pickle.load(file)
+    
+UD2 = loaded_all_data
+
+
+line_color = '#008111'
+axes[0].plot(UD0,'.', markersize = markersizes,color=line_color,alpha = 0.5, label= f'Python {np.round(UD0.max(),5)} \n final  {np.round(UD0[-1],3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
+axes[1].plot(UD1, '.',markersize = markersizes,color=line_color,alpha = 0.5, label= f'Python {np.round(UD1.max(),5)} \n final  {np.round(UD1[-1],3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
+axes[2].plot(UD2, '.',markersize = markersizes,color=line_color,alpha = 0.5, label= f'Python {np.round(UD2.max(),5)} \n final  {np.round(UD2[-1],3)}')#color=plt.cm.terrain(f * vmax))  # , color='tab:orange')
+
+axes[1].set_ylabel("ca concentration (uM)")
+axes[0].set_title("Dend0")
+axes[1].set_title("Dend1")
+axes[2].set_title("Dend2")
+axes[2].set_xlabel("t [ms]")
+plt.subplots_adjust(hspace=0.9)  # Increase the space between plots
+for i in range(len(dendID)):
+    axes[i].legend(loc ='upper right')
+
+
+ylilmmax = 0.35
+ylilmmin = 0
+axes[0].set_ylim(ylilmmin,ylilmmax)
+axes[2].set_ylim(ylilmmin,ylilmmax)
+
+axes[1].set_ylim(ylilmmin,ylilmmax)
+axes[2].set_ylim(ylilmmin,ylilmmax)
 
