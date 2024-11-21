@@ -193,9 +193,31 @@ for i,sp in enumerate([39,41,43,46]): #len(mt)
     axes[i].set_ylim(0,ylim_)
 plt.savefig('plot_D = '+str(ca_diff.value_as(U.m2/U.s))+'.svg')
 
+# _____________Dendritic segments _________________
+fig, axes = plt.subplots(5, sharex=True)
+vmax = 0.8
+line_color = '#000080'
+data, meta = sim.samples(ca_prob_handle)[0]
+
+for i,dn in enumerate([40,42,45]): #len(mt)
+    if dn==40:
+        label_com = 'dend1'
+        np.savetxt(f'ACaD0_{delta_t.value_as(U.ms)}.txt',data.T[dn+1])
+    if dn==42:
+        label_com = 'dend2'
+        np.savetxt(f'ACaD1_{delta_t.value_as(U.ms)}.txt',data.T[dn+1])
+    if dn==45:
+        label_com = 'dend3'
+        np.savetxt(f'ACaD2_{delta_t.value_as(U.ms)}.txt',data.T[dn+1])
+
+
+    axes[i].plot(1e3*data[:,dn+1], label = label_com )  
+    axes[i].legend(loc ='upper right')
+    axes[i].set_xlim(xlim_0,xlim_1)
+    axes[i].set_ylim(0,ylim_)
+plt.savefig('Dend_plot_D = '+str(ca_diff.value_as(U.m2/U.s))+'.svg')
 
 ##___________________Current___________________
-
 
 fig, axes = plt.subplots(NumSpines, sharex=True)
 vmax = 0.8
