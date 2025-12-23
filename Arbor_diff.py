@@ -112,7 +112,8 @@ decor = arbor.decor()
 ca_diff = 220*1e-5*U.m2/U.s # diffusivity
 decor.set_ion("my_ca",int_con=0.0*U.mM,  diff=ca_diff)
 length_per_cv = 1 #*U.um
-decor.discretization(arbor.cv_policy(f'(max-extent {length_per_cv})'))
+#decor.discretization(arbor.cv_policy(f'(max-extent {length_per_cv})'))
+cv_policy = arbor.cv_policy(f'(max-extent {length_per_cv})')
 ##Custom decay mech
 mech_decay=arbor.mechanism("calcium_decay/my_ca",{'tau' : tau_ca.value_as(U.ms)})
 decor.paint('(all)', arbor.density(mech_decay))
@@ -129,17 +130,18 @@ for i in range(NumSpines):
 
 probes = [arbor.cable_probe_ion_diff_concentration_cell("my_ca","tag_my_ca")]
 probes_I =[arbor.cable_probe_point_state_cell("calcium_based_synapse", "I_syn", "tag_I_syn")]
-probe_area = [arbor.cable_probe_point_state(0,"calcium_based_synapse", "area0", "tag_area")]
+#probe_area = [arbor.cable_probe_point_state(0,"calcium_based_synapse", "area0", "tag_area")]
 probes_W =[arbor.cable_probe_point_state_cell("calcium_based_synapse", "W", "tag_W")]
 probes_all = []
 probes_all.extend(probes)
 probes_all.extend(probes_I)
-probes_all.extend(probe_area)
+#probes_all.extend(probe_area)
 probes_all.extend(probes_W)
 # --------------- Defining cell and recipe and simulation  --------------
 
-cel = arbor.cable_cell(morph, decor, labels)
-    
+#cel = arbor.cable_cell(morph, decor, labels)
+cel = arbor.cable_cell(morph, decor, labels, discretization=cv_policy)
+
 rec = recipe(cel, probes_all)
 sim = arbor.simulation(rec)
 arbor.write_component(cel, 'morpho_2spines' + 'config1' + ".acc")
